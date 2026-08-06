@@ -1,0 +1,30 @@
+<idea-plugin require-restart="true">
+  <id>com.codex.rider.inspectioncopy</id>
+  <name>Rider Inspection Copy</name>
+  <version>_PLACEHOLDER_</version>
+  <vendor>Codex</vendor>
+  <idea-version since-build="_PLACEHOLDER_" until-build="_PLACEHOLDER_" />
+  <depends>com.intellij.modules.rider</depends>
+
+  <actions>
+    <action id="Codex.InspectBenchmarkProject"
+            class="com.codex.rider.inspectioncopy.InspectBenchmarkProjectAction"
+            text="Inspect Code (copyable results)"
+            description="Run Rider's standard project inspection and keep locations available for copying">
+      <add-to-group group-id="SolutionExplorerPopupMenu"
+                    anchor="after"
+                    relative-to-action="InspectOnProjectModelAction" />
+    </action>
+  </actions>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <postStartupActivity implementation="com.codex.rider.inspectioncopy.RiderInspectionResultsStartupActivity" />
+  </extensions>
+
+<description>
+<![CDATA[
+<p>Run Rider's standard project inspection and copy the already displayed Code Issues with file and line coordinates without navigation.</p>
+]]>
+</description>
+
+</idea-plugin>
