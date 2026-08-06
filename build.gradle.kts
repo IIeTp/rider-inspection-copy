@@ -19,6 +19,7 @@ val ProductVersion: String by project
 val DotnetPluginId: String by project
 val RiderPluginId: String by project
 val PublishToken: String by project
+val riderPath: String? = providers.gradleProperty("riderPath").orNull
 
 allprojects {
     repositories {
@@ -55,7 +56,7 @@ val setBuildTool by tasks.registering {
         var executable = "dotnet"
         var args = mutableListOf("msbuild")
 
-        if (isWindows) {
+        if (isWindows && file("${rootDir}\\tools\\vswhere.exe").isFile) {
             val execResult = providers.exec {
                 executable("${rootDir}\\tools\\vswhere.exe")
                 args("-latest", "-property", "installationPath", "-products", "*")
@@ -131,10 +132,13 @@ tasks.buildPlugin {
 
 dependencies {
     intellijPlatform {
-        // Use the already installed Rider during local development. This keeps rdgen
-        // and the frontend compiler on exactly the same 2026.1 API as the target IDE
-        // and avoids downloading a second multi-gigabyte Rider archive.
-        local("C:/Program Files/JetBrains/Rider2026.1")
+        // CI resolves the Rider SDK from JetBrains' repository. For local development,
+        // pass -PriderPath="C:/Program Files/JetBrains/Rider2026.1" to use an existing IDE.
+        if (riderPath.isNullOrBlank()) {
+            rider(ProductVersion)
+        } else {
+            local(riderPath!!)
+        }
 
         // TODO: add plugins
         // bundledPlugin("uml")

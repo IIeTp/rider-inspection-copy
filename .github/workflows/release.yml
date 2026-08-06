@@ -1,0 +1,104 @@
+name: Build and release plugin
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag, for example v0.7.7'
+        required: true
+        default: 'v0.7.7'
+
+concurrency:
+  group: plugin-build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build plugin
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out sources
+        uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: zulu
+          java-version: '21'
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Resolve build version
+        id: version
+        shell: bash
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            tag="${{ inputs.tag }}"
+          elif [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            tag="${GITHUB_REF_NAME}"
+          else
+            tag="v$(sed -n 's/^PluginVersion=//p' gradle.properties | head -n 1)"
+          fi
+
+          version="${tag#v}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+([-.][0-9A-Za-z.-]+)?$ ]]; then
+            echo "Invalid plugin version: $version" >&2
+            exit 1
+          fi
+
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Build release package
+        shell: bash
+        run: |
+          rm -rf output
+          ./gradlew clean buildPlugin \
+            -PBuildConfiguration=Release \
+            -PPluginVersion="${{ steps.version.outputs.version }}" \
+            --no-daemon --stacktrace
+
+      - name: Check package output
+        shell: bash
+        run: |
+          test -n "$(find output -maxdepth 1 -type f -name '*.zip' -print -quit)"
+          ls -lh output/*.zip
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rider-inspection-copy-${{ steps.version.outputs.version }}
+          path: output/*.zip
+          if-no-files-found: error
+
+      - name: Create or update GitHub Release
+        if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          tag="${{ steps.version.outputs.tag }}"
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$tag" output/*.zip --repo "$GITHUB_REPOSITORY" --clobber
+          else
+            gh release create "$tag" output/*.zip \
+              --repo "$GITHUB_REPOSITORY" \
+              --target "$GITHUB_SHA" \
+              --title "$tag" \
+              --generate-notes
+          fi
