@@ -1,6 +1,7 @@
 package com.codex.rider.inspectioncopy;
 
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
@@ -44,10 +45,14 @@ public final class RiderInspectionResultsStartupActivity implements StartupActiv
     }
 
     private void start() {
-      timer = new javax.swing.Timer(500, event -> scan());
-      timer.setInitialDelay(250);
-      timer.start();
-      scan();
+      ApplicationManager.getApplication().invokeLater(() -> {
+        if (project.isDisposed()) return;
+
+        timer = new javax.swing.Timer(500, event -> scan());
+        timer.setInitialDelay(250);
+        timer.start();
+        scan();
+      });
     }
 
     private void scan() {

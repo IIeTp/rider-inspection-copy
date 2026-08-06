@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: 'Release tag, for example v0.7.7'
+        description: 'Release tag, for example v0.7.8'
         required: true
-        default: 'v0.7.7'
+        default: 'v0.7.8'
 
 concurrency:
   group: plugin-build-${{ github.ref }}

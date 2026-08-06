@@ -19,6 +19,6 @@ class InspectBenchmarkProjectAction : DumbAwareAction(
             ?: ActionManager.getInstance().getAction("InspectCode")
             ?: return
 
-        standard.actionPerformed(e)
+        ActionManager.getInstance().tryToExecute(standard, e.inputEvent, null, e.place, true)
     }
 }
