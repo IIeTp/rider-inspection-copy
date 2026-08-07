@@ -102,3 +102,20 @@ jobs:
               --title "$tag" \
               --generate-notes
           fi
+
+      - name: Publish to JetBrains Marketplace
+        if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+        env:
+          PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+        shell: bash
+        run: |
+          if [[ -z "$PUBLISH_TOKEN" ]]; then
+            echo "GitHub Actions secret PUBLISH_TOKEN is required to publish to JetBrains Marketplace." >&2
+            exit 1
+          fi
+
+          ./gradlew publishPlugin \
+            -PBuildConfiguration=Release \
+            -PPluginVersion="${{ steps.version.outputs.version }}" \
+            -PPublishToken="$PUBLISH_TOKEN" \
+            --no-daemon --stacktrace

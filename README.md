@@ -37,7 +37,12 @@ every push and pull request. It downloads the Rider SDK itself and does not
 require Rider or Visual Studio to be committed to the repository.
 
 To publish a GitHub Release, create a tag such as `v0.7.8`, or run the workflow
-manually with a version tag. The workflow uploads only the built plugin ZIP.
+manually with a version tag. The workflow uploads the built plugin ZIP and, for
+release runs, can publish the same package to JetBrains Marketplace.
+
+To enable Marketplace publishing, add a repository secret named `PUBLISH_TOKEN`
+with a JetBrains Marketplace upload token. Pull requests and ordinary pushes do
+not publish anything.
 
 ## License
 
