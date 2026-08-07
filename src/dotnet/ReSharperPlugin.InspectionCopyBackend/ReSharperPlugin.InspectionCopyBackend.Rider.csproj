@@ -10,6 +10,11 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Rider.SDK" Version="$(SdkVersion)" />
+    <!-- Rider.Backend declares 262.0.0, which is not published for these native packages.
+         Pin the current published 262.0 build so restore resolves the declared range exactly. -->
+    <PackageReference Include="JetBrains.Rider.Native.Core.windows-arm64.Release" Version="262.0.20260802.172830" PrivateAssets="all" />
+    <PackageReference Include="JetBrains.Rider.Native.Core.windows-x64.Release" Version="262.0.20260802.172944" PrivateAssets="all" />
+    <PackageReference Include="JetBrains.Rider.Native.Core.windows-x86.Release" Version="262.0.20260802.172835" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

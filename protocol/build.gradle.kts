@@ -18,8 +18,8 @@ dependencies {
     )
 }
 
-val DotnetPluginId: String by rootProject
-val RiderPluginId: String by rootProject
+val DotnetPluginId = rootProject.providers.gradleProperty("DotnetPluginId").get()
+val RiderPluginId = rootProject.providers.gradleProperty("RiderPluginId").get()
 
 rdgen {
     val csOutput = File(rootDir, "src/dotnet/${DotnetPluginId}")
