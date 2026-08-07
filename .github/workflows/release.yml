@@ -89,6 +89,12 @@ jobs:
             -PPluginVersion="${{ steps.version.outputs.version }}" \
             --no-daemon --stacktrace
 
+      - name: Install Mono for .NET Framework tests
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y mono-runtime
+
       - name: Run backend tests
         shell: bash
         run: |
