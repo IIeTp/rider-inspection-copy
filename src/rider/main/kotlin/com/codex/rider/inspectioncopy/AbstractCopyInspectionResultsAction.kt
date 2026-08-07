@@ -35,6 +35,7 @@ abstract class AbstractCopyInspectionResultsAction(
         e.presentation.isEnabled = tree.rowCount > 0 && !waiting.get()
     }
 
+    @Suppress("TooGenericExceptionCaught")
     override fun actionPerformed(e: AnActionEvent) {
         val indices = collectIssueIndices()
         log.info(
@@ -68,7 +69,7 @@ abstract class AbstractCopyInspectionResultsAction(
         log.info("Sending copy request: resultModelId=$resultModelId, issueCount=${indices.size}")
         try {
             model.start.fire("$resultModelId|$requestId|${indices.joinToString(",")}")
-        } catch (t: Throwable) {
+        } catch (t: RuntimeException) {
             waiting.set(false)
             log.warn("Could not send inspection-copy request", t)
         }

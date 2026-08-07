@@ -1,14 +1,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using JetBrains.Application.Parts;
 using JetBrains.DocumentModel;
 using JetBrains.ProjectModel;
 using JetBrains.ReSharper.Daemon.SolutionAnalysis.ErrorsView;
-using JetBrains.ReSharper.Feature.Services.Protocol;
 using JetBrains.ReSharper.Feature.Services.Occurrences;
+using JetBrains.ReSharper.Feature.Services.Protocol;
 using JetBrains.ReSharper.Psi;
 using JetBrains.Rider.Model;
 using JetBrains.Rider.Model.Inspections;
@@ -22,6 +24,7 @@ namespace ReSharperPlugin.InspectionCopyBackend;
 [SolutionComponent(Instantiation.ContainerAsyncPrimaryThread)]
 public sealed class InspectionCopyRequestHandler
 {
+  private static readonly char[] RequestSeparators = { ',' };
   private readonly ISolution solution;
   private readonly InspectionCopyModel model;
 
@@ -34,6 +37,8 @@ public sealed class InspectionCopyRequestHandler
     Log("start signal subscribed");
   }
 
+  [SuppressMessage("Design", "CA1031", Justification =
+    "The protocol boundary must convert any request failure into a model error.")]
   private void HandleRequest(string request)
   {
     Log($"request received: {request?.Length ?? 0} characters");
@@ -53,7 +58,7 @@ public sealed class InspectionCopyRequestHandler
         throw new InvalidOperationException("Invalid Rider inspection result model id.");
 
       var indices = request.Substring(responseSeparator + 1)
-        .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+        .Split(RequestSeparators, StringSplitOptions.RemoveEmptyEntries)
         .Select(int.Parse)
         .Distinct()
         .ToArray();
@@ -84,6 +89,8 @@ public sealed class InspectionCopyRequestHandler
     }
   }
 
+  [SuppressMessage("Design", "CA1031", Justification =
+    "Logging is best effort and must never break the inspection result path.")]
   private static void Log(string message)
   {
     try
@@ -108,7 +115,7 @@ public sealed class InspectionCopyRequestHandler
     return null;
   }
 
-  private static IReadOnlyList<IOccurrence> FindIndexedOccurrences(InspectionResultsModel resultModel)
+  private static List<IOccurrence> FindIndexedOccurrences(InspectionResultsModel resultModel)
   {
     var navigateField = FindField(resultModel.GetType(), "_NavigateTo");
     var navigateSignal = navigateField?.GetValue(resultModel);
@@ -120,7 +127,7 @@ public sealed class InspectionCopyRequestHandler
     var items = itemsField?.GetValue(listeners) as IEnumerable;
     var sizeField = FindField(listeners?.GetType(), "mySize");
     var sizeValue = sizeField?.GetValue(listeners);
-    var size = sizeValue == null ? int.MaxValue : Convert.ToInt32(sizeValue);
+    var size = sizeValue == null ? int.MaxValue : Convert.ToInt32(sizeValue, CultureInfo.InvariantCulture);
 
     if (items == null) return null;
 
@@ -140,6 +147,8 @@ public sealed class InspectionCopyRequestHandler
     return null;
   }
 
+  [SuppressMessage("Design", "CA1031", Justification =
+    "Reflection probes private Rider implementation details that vary by IDE version.")]
   private static List<IOccurrence> FindOccurrenceList(object value, ISet<object> visited)
   {
     if (value == null || !visited.Add(value)) return null;
@@ -157,7 +166,7 @@ public sealed class InspectionCopyRequestHandler
       {
         fieldValue = field.GetValue(value);
       }
-      catch
+      catch (Exception)
       {
         continue;
       }
@@ -197,7 +206,7 @@ public sealed class InspectionCopyRequestHandler
       ?.GetValue(value);
   }
 
-  private static string BuildReport(IReadOnlyList<IOccurrence> occurrences, IReadOnlyCollection<int> indices)
+  private static string BuildReport(List<IOccurrence> occurrences, IReadOnlyCollection<int> indices)
   {
     var lines = new List<string>();
 

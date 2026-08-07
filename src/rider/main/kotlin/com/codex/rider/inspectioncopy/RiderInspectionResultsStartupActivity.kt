@@ -34,8 +34,8 @@ class RiderInspectionResultsStartupActivity : StartupActivity.DumbAware {
             ApplicationManager.getApplication().invokeLater {
                 if (project.isDisposed) return@invokeLater
 
-                timer = Timer(500) { scan() }.apply {
-                    initialDelay = 250
+                timer = Timer(SCAN_INTERVAL_MS) { scan() }.apply {
+                    initialDelay = INITIAL_SCAN_DELAY_MS
                     start()
                 }
                 scan()
@@ -77,6 +77,8 @@ class RiderInspectionResultsStartupActivity : StartupActivity.DumbAware {
             private const val PROBLEMS_TOOL_WINDOW_ID = "Problems View"
             private const val RIDER_RESULT_PANEL =
                 "com.jetbrains.rider.inspections.RiderInspectionsResultPanel"
+            private const val SCAN_INTERVAL_MS = 500
+            private const val INITIAL_SCAN_DELAY_MS = 250
 
             private fun findRiderResultPanel(component: Component): JComponent? {
                 if (component is JComponent && component.javaClass.name == RIDER_RESULT_PANEL) {

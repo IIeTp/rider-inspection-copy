@@ -79,6 +79,28 @@ jobs:
           test -n "$(find output -maxdepth 1 -type f -name '*.zip' -print -quit)"
           ls -lh output/*.zip
 
+      - name: Run Kotlin tests and plugin quality checks
+        shell: bash
+        run: |
+          ./gradlew detekt :test verifyPluginStructure verifyPlugin \
+            -PBuildConfiguration=Release \
+            -PPluginVersion="${{ steps.version.outputs.version }}" \
+            --no-daemon --stacktrace
+
+      - name: Run backend tests
+        shell: bash
+        run: |
+          dotnet test \
+            src/dotnet/ReSharperPlugin.InspectionCopyBackend.Tests/ReSharperPlugin.InspectionCopyBackend.Tests.csproj \
+            --configuration Release --no-build --no-restore \
+            --logger "console;verbosity=minimal"
+
+      - name: Check C# formatting
+        shell: bash
+        run: |
+          dotnet format ReSharperPlugin.InspectionCopyBackend.sln \
+            --verify-no-changes --no-restore --severity warn
+
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v7
         with:

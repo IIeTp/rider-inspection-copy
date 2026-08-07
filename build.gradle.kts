@@ -1,10 +1,12 @@
 import com.jetbrains.plugin.structure.base.utils.isFile
+import dev.detekt.gradle.Detekt
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
 
 plugins {
     id("java")
     alias(libs.plugins.kotlinJvm)
+    alias(libs.plugins.detekt)
     id("org.jetbrains.intellij.platform") version "2.18.1"     // See https://github.com/JetBrains/intellij-platform-gradle-plugin/releases
     id("me.filippov.gradle.jvm.wrapper") version "0.15.0"
 }
@@ -47,6 +49,9 @@ sourceSets {
         kotlin.srcDir("src/rider/main/kotlin")
         resources.srcDir("src/rider/main/resources")
     }
+    test {
+        kotlin.srcDir("src/rider/test/kotlin")
+    }
 }
 
 val compileDotNet by tasks.registering(Exec::class) {
@@ -72,6 +77,8 @@ tasks.buildPlugin {
 }
 
 dependencies {
+    testImplementation(kotlin("test-junit5"))
+
     intellijPlatform {
         // CI resolves the Rider SDK from JetBrains' repository. For local development,
         // pass -PriderPath="C:/Program Files/JetBrains/Rider2026.1" to use an existing IDE.
@@ -112,6 +119,28 @@ tasks.prepareSandbox {
     )
     from(outputFolder.file("${DotnetPluginId}.dll")) { into("${rootProject.name}/dotnet") }
     from(outputFolder.file("${DotnetPluginId}.pdb")) { into("${rootProject.name}/dotnet") }
+}
+
+detekt {
+    source.setFrom(files("src/rider/main/kotlin", "src/rider/test/kotlin"))
+    config.setFrom(files("config/detekt/detekt.yml"))
+    buildUponDefaultConfig = true
+}
+
+tasks.withType<Detekt>().configureEach {
+    exclude("**/InspectionCopyModel.Generated.kt")
+    reports {
+        html.required.set(true)
+        sarif.required.set(true)
+    }
+}
+
+tasks.named("check") {
+    dependsOn("detekt")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 tasks.publishPlugin {

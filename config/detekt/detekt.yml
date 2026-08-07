@@ -1,0 +1,9 @@
+# These two rules are intentionally disabled for this small IntelliJ action.
+# The action contains guarded reflection and several small traversal helpers;
+# forcing fewer returns or fewer functions would make that code less clear.
+complexity:
+  TooManyFunctions:
+    active: false
+style:
+  ReturnCount:
+    active: false

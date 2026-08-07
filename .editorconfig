@@ -1,0 +1,25 @@
+root = true
+
+[*]
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.cs]
+indent_style = space
+indent_size = 2
+tab_width = 2
+
+# Keep the rules that are useful in a build explicit instead of enabling every
+# new SDK rule at once.
+dotnet_sort_system_directives_first = true
+dotnet_style_require_accessibility_modifiers = always
+csharp_prefer_braces = true
+dotnet_diagnostic.IDE0005.severity = warning
+dotnet_diagnostic.IDE0040.severity = warning
+dotnet_diagnostic.CA1031.severity = warning
+
+[*.{kt,kts}]
+indent_style = space
+indent_size = 4
+continuation_indent_size = 4
+ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
