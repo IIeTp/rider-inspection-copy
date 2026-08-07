@@ -141,7 +141,9 @@ tasks.named("check") {
 }
 
 tasks.test {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        includeEngines("junit-jupiter")
+    }
 }
 
 tasks.publishPlugin {
