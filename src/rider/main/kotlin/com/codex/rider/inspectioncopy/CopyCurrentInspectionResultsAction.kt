@@ -10,7 +10,6 @@ import com.jetbrains.rd.ide.model.Solution
 import com.jetbrains.rd.ide.model.inspectionCopyModel
 import com.jetbrains.rd.util.lifetime.Lifetime
 import java.awt.datatransfer.StringSelection
-import java.lang.reflect.Method
 import java.util.Collections
 import java.util.IdentityHashMap
 import java.util.LinkedHashSet
@@ -140,7 +139,7 @@ class CopyCurrentInspectionResultsAction(
         if (!seen.add(node)) return
         issueIndex(node)?.let { result.add(it) }
         for (i in 0 until node.childCount) {
-            (node.getChildAt(i) as? TreeNode)?.let { collect(it, seen, result) }
+            collect(node.getChildAt(i), seen, result)
         }
     }
 
