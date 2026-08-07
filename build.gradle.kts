@@ -163,13 +163,15 @@ tasks.test {
     jvmArgs("-Xshare:off")
 }
 
+val pluginDistributionPath = layout.projectDirectory.file("build/distributions/${rootProject.name}-${version.get()}.zip")
+
 val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
     splitMode = true
     pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.BOTH
     // Install the built plugin from its distribution ZIP
     plugins {
-        // Install built plugin ZIP directly
-        localPlugin(layout.projectDirectory.file("build/distributions/${rootProject.name}-${version.get()}.zip").asFile)
+        // Install built plugin ZIP directly; uses pre-computed path
+        localPlugin(pluginDistributionPath)
     }
     task {
         description = "Runs Rider platform tests with the built plugin installed"
