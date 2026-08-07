@@ -163,8 +163,23 @@ tasks.test {
     jvmArgs("-Xshare:off")
 }
 
-// riderIdeTest disabled for CI: plugin not installed in test sandbox
-// See https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-testing-extension.html
+val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
+    splitMode = true
+    pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.BOTH
+    plugins {
+        // Ensure the current plugin is installed in the test sandbox
+        plugin(project.name!!, version as String)
+    }
+    task {
+        description = "Runs Rider platform tests with the built plugin installed"
+        testClassesDirs = ideTestSourceSet.output.classesDirs
+        classpath += ideTestSourceSet.runtimeClasspath
+        useJUnitPlatform {
+            includeEngines("junit-jupiter")
+        }
+        jvmArgs("-Xshare:off")
+    }
+}
 
 tasks.publishPlugin {
     dependsOn(tasks.buildPlugin)
