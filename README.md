@@ -35,11 +35,26 @@ Use the following command to build a Release package from an installed Rider:
 Without `-PriderPath`, Gradle resolves the Rider SDK from JetBrains repositories.
 The resulting plugin ZIP is written to `output/`.
 
+Run the fast Kotlin tests with:
+
+```powershell
+.\gradlew.bat test
+```
+
+Run the Rider platform integration test, which starts a test Rider instance
+with the plugin installed:
+
+```powershell
+.\gradlew.bat riderIdeTest
+```
+
 ## GitHub Actions
 
 The workflow in `.github/workflows/release.yml` builds the plugin on GitHub for
 every push and pull request. It downloads the Rider SDK itself and does not
 require Rider or Visual Studio to be committed to the repository.
+It also runs `riderIdeTest`, so a build fails if the plugin cannot be loaded or
+the project inspection action is not registered.
 
 To publish a GitHub Release, create a tag such as `v0.8.0`, or run the workflow
 manually with a version tag. The workflow uploads the built plugin ZIP and, for

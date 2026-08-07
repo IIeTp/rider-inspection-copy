@@ -2,6 +2,7 @@ import com.jetbrains.plugin.structure.base.utils.isFile
 import dev.detekt.gradle.Detekt
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
     id("java")
@@ -52,7 +53,16 @@ sourceSets {
     test {
         kotlin.srcDir("src/rider/test/kotlin")
     }
+    create("ideTest") {
+        kotlin.srcDir("src/rider/ideTest/kotlin")
+    }
 }
+
+val ideTestSourceSet = sourceSets["ideTest"]
+configurations["ideTestImplementation"].extendsFrom(configurations["testImplementation"])
+configurations["ideTestRuntimeOnly"].extendsFrom(configurations["testRuntimeOnly"])
+ideTestSourceSet.compileClasspath += sourceSets.main.get().output
+ideTestSourceSet.runtimeClasspath += sourceSets.main.get().output
 
 val compileDotNet by tasks.registering(Exec::class) {
     description = "Build the ReSharper backend plugin"
@@ -90,6 +100,10 @@ dependencies {
         } else {
             local(riderPath!!)
         }
+
+        // Rider does not publish its platform test framework as a Maven artifact.
+        // Use the framework bundled in the Rider distribution for platform tests.
+        testFramework(TestFrameworkType.Bundled)
 
         // TODO: add plugins
         // bundledPlugin("uml")
@@ -145,6 +159,18 @@ tasks.test {
         includeEngines("junit-jupiter")
     }
     jvmArgs("-Xshare:off")
+}
+
+val riderIdeTest by intellijPlatformTesting.testIde.registering {
+    task {
+        description = "Runs Rider platform tests with the built plugin installed"
+        testClassesDirs = ideTestSourceSet.output.classesDirs
+        classpath = ideTestSourceSet.runtimeClasspath
+        useJUnitPlatform {
+            includeEngines("junit-jupiter")
+        }
+        jvmArgs("-Xshare:off")
+    }
 }
 
 tasks.publishPlugin {

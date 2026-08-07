@@ -89,13 +89,26 @@ jobs:
             -PPluginVersion="${{ steps.version.outputs.version }}" \
             --no-daemon --stacktrace
 
+      - name: Run Rider platform integration tests
+        shell: bash
+        run: |
+          ./gradlew riderIdeTest \
+            -PBuildConfiguration=Release \
+            -PPluginVersion="${{ steps.version.outputs.version }}" \
+            --no-daemon --stacktrace
+
       - name: Install Mono for .NET Framework tests
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y mono-runtime
+          sudo apt-get install --no-install-recommends -y mono-complete
 
       - name: Run backend tests
+        env:
+          # ReSharper SDK tests target .NET Framework and start a Mono test host.
+          # On GitHub-hosted Linux runners the host can need more than VSTest's
+          # default 90 seconds before protocol negotiation completes.
+          VSTEST_CONNECTION_TIMEOUT: 300
         shell: bash
         run: |
           dotnet test \
