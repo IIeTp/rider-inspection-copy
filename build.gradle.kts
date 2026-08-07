@@ -185,14 +185,6 @@ tasks.prepareSandbox {
 tasks.publishPlugin {
     dependsOn(tasks.buildPlugin)
     token.set("${PublishToken}")
-
-    doLast {
-        providers.exec {
-            executable("dotnet")
-            args("nuget","push","output/${DotnetPluginId}.${version}.nupkg","--api-key","${PublishToken}","--source","https://plugins.jetbrains.com")
-            workingDir(rootDir)
-        }.result.get()
-    }
 }
 
 val riderModel: Configuration by configurations.creating {
