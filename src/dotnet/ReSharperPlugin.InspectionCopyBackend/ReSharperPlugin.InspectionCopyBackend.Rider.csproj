@@ -16,6 +16,8 @@
     <PackageReference Include="JetBrains.Rider.Native.Core.windows-x64.Release" Version="262.0.20260802.172944" PrivateAssets="all" />
     <PackageReference Include="System.Memory" Version="4.6.0" ExcludeAssets="compile" />
     <PackageReference Include="System.IO.Pipelines" Version="8.0.0" ExcludeAssets="compile" />
+    <PackageReference Include="ICSharpCode.Decompiler" Version="8.2.0.7535" ExcludeAssets="compile" />
+    <PackageReference Include="SQLitePCLRaw.core" Version="1.1.2" ExcludeAssets="compile" />
     <PackageReference Include="JetBrains.Rider.Native.Core.windows-x86.Release" Version="262.0.20260802.172835" PrivateAssets="all" />
   </ItemGroup>
 
