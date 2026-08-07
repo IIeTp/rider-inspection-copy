@@ -98,16 +98,6 @@ val compileDotNet by tasks.registering {
     }
 }
 
-val testDotNet by tasks.registering {
-    doLast {
-        providers.exec {
-            executable("dotnet")
-            args("test","${DotnetSolution}","--logger","GitHubActions")
-            workingDir(rootDir)
-        }.result.get()
-    }
-}
-
 tasks.buildPlugin {
     doLast {
         copy {
