@@ -6,6 +6,6 @@ namespace ReSharperPlugin.InspectionCopyBackend.Tests;
 /// Marks the test environment zone as required by the test assembly.
 /// </summary>
 [ZoneMarker]
-public class ZoneMarker : IRequireInspectionCopyBackendTestEnvironmentZone
+public class ZoneMarker : IRequire<InspectionCopyBackendTestEnvironmentZone>
 {
 }
