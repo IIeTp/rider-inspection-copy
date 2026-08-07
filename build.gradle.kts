@@ -166,10 +166,10 @@ tasks.test {
 val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
     splitMode = true
     pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.BOTH
-    // Disable plugin installation to avoid configuration cache issues with local plugin
-    // plugins {
-    //     plugin(project.name.toString(), version.toString())
-    // }
+    // Use bundledPlugin to install the plugin by its ID from the built distribution
+    plugins {
+        bundledPlugin("com.codex.inspectioncopy")
+    }
     task {
         description = "Runs Rider platform tests with the built plugin installed"
         testClassesDirs = ideTestSourceSet.output.classesDirs
