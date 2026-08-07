@@ -28,6 +28,9 @@ public sealed class InspectionCopyRequestHandler
   private readonly ISolution solution;
   private readonly InspectionCopyModel model;
 
+  /// <summary>
+  /// Initializes the request handler and subscribes it to the protocol model.
+  /// </summary>
   public InspectionCopyRequestHandler(ISolution solution)
   {
     this.solution = solution;

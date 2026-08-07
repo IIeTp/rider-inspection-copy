@@ -29,6 +29,7 @@ using JetBrains.Rd.Text;
 // ReSharper disable RedundantEmptyObjectCreationArgumentList
 // ReSharper disable InconsistentNaming
 // ReSharper disable RedundantOverflowCheckingContext
+#pragma warning disable CS1591
 
 
 namespace JetBrains.Rider.Model
@@ -135,3 +136,4 @@ namespace JetBrains.Rider.Model
     }
   }
 }
+#pragma warning restore CS1591

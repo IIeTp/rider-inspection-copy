@@ -144,6 +144,7 @@ tasks.test {
     useJUnitPlatform {
         includeEngines("junit-jupiter")
     }
+    jvmArgs("-Xshare:off")
 }
 
 tasks.publishPlugin {
