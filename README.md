@@ -5,7 +5,12 @@ and copies the displayed Code Issues with file paths and line coordinates withou
 requiring navigation to every issue.
 
 The plugin contains a Rider frontend and a ReSharper/Rider backend. The source in
-this repository corresponds to the 0.7.10 build.
+this repository corresponds to the 0.8.0 build.
+
+The Code Issues context menu provides `Copy Inspection Results` and
+`Copy Inspection Results (Compact)`. The compact action groups files by their
+directory and combines identical messages with their line ranges while using
+the results already displayed by Rider.
 
 ## Build locally
 
@@ -36,7 +41,7 @@ The workflow in `.github/workflows/release.yml` builds the plugin on GitHub for
 every push and pull request. It downloads the Rider SDK itself and does not
 require Rider or Visual Studio to be committed to the repository.
 
-To publish a GitHub Release, create a tag such as `v0.7.8`, or run the workflow
+To publish a GitHub Release, create a tag such as `v0.8.0`, or run the workflow
 manually with a version tag. The workflow uploads the built plugin ZIP and, for
 release runs, can publish the same package to JetBrains Marketplace.
 

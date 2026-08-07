@@ -17,7 +17,7 @@ import javax.swing.JComponent
 import javax.swing.JTree
 import javax.swing.Timer
 
-/** Adds a copy-only action to Rider's standard Code Issues result panel. */
+/** Adds copy actions to Rider's standard Code Issues result panel. */
 class RiderInspectionResultsStartupActivity : StartupActivity.DumbAware {
     override fun runActivity(project: Project) {
         val installer = Installer(project)
@@ -62,7 +62,8 @@ class RiderInspectionResultsStartupActivity : StartupActivity.DumbAware {
 
             val tree = findTree(panel) ?: return
             val copyAction = CopyCurrentInspectionResultsAction(panel, tree)
-            val actionGroup = DefaultActionGroup(copyAction)
+            val compactCopyAction = CopyCompactInspectionResultsAction(panel, tree)
+            val actionGroup = DefaultActionGroup(copyAction, compactCopyAction)
             PopupHandler.installPopupMenu(tree, actionGroup, "Codex.RiderInspectionCopy.Popup")
         }
 
