@@ -168,11 +168,12 @@ val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
     pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.BOTH
     // Install the built plugin from its distribution ZIP
     plugins {
-        // Install built plugin ZIP directly; depends on buildPlugin
-        localPlugin(layout.projectDirectory.file("build/distributions/${rootProject.name}-${version}.zip"))
+        // Install built plugin ZIP directly
+        localPlugin(layout.projectDirectory.file("build/distributions/${rootProject.name}-${version}.zip").asFile)
     }
     task {
         description = "Runs Rider platform tests with the built plugin installed"
+        dependsOn(tasks.buildPlugin)
         testClassesDirs = ideTestSourceSet.output.classesDirs
         classpath += ideTestSourceSet.runtimeClasspath
         useJUnitPlatform {
@@ -180,7 +181,6 @@ val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
         }
         jvmArgs("-Xshare:off")
     }
-    dependsOn(tasks.buildPlugin)
 }
 
 tasks.publishPlugin {
