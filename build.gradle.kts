@@ -3,6 +3,7 @@ import dev.detekt.gradle.Detekt
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Sync
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.tasks.aware.SplitModeAware
 
 plugins {
     id("java")
@@ -163,6 +164,8 @@ tasks.test {
 }
 
 val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
+    splitMode = true
+    pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.BOTH
     task {
         description = "Runs Rider platform tests with the built plugin installed"
         testClassesDirs = ideTestSourceSet.output.classesDirs
