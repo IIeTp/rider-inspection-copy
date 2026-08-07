@@ -1,7 +1,6 @@
 import com.jetbrains.plugin.structure.base.utils.isFile
-import groovy.ant.FileNameFinder
-import org.apache.tools.ant.taskdefs.condition.Os
-import org.jetbrains.intellij.platform.gradle.Constants
+import org.gradle.api.tasks.Exec
+import org.gradle.api.tasks.Sync
 
 plugins {
     id("java")
@@ -9,9 +8,6 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.18.1"     // See https://github.com/JetBrains/intellij-platform-gradle-plugin/releases
     id("me.filippov.gradle.jvm.wrapper") version "0.15.0"
 }
-
-val isWindows = Os.isFamily(Os.FAMILY_WINDOWS)
-extra["isWindows"] = isWindows
 
 val DotnetSolution: String by project
 val BuildConfiguration: String by project
@@ -53,76 +49,26 @@ sourceSets {
     }
 }
 
-var buildToolExecutable: String? = null
-var buildToolArgs: List<String>? = null
-
-val setBuildTool by tasks.registering {
-    doLast {
-        var executable = "dotnet"
-        var args = mutableListOf("msbuild")
-
-        if (isWindows && file("${rootDir}\\tools\\vswhere.exe").isFile) {
-            val execResult = providers.exec {
-                executable("${rootDir}\\tools\\vswhere.exe")
-                args("-latest", "-property", "installationPath", "-products", "*")
-                workingDir(rootDir)
-            }
-
-            val directory = execResult.standardOutput.asText.get().trim()
-            if (directory.isNotEmpty()) {
-                val files = FileNameFinder().getFileNames("${directory}\\MSBuild", "**/MSBuild.exe")
-                executable = files.get(0)
-                args = mutableListOf("/v:minimal")
-            }
-        }
-
-        args.add(DotnetSolution)
-        args.add("/p:Configuration=${BuildConfiguration}")
-        args.add("/p:HostFullIdentifier=")
-
-        buildToolExecutable = executable
-        buildToolArgs = args
-    }
+val compileDotNet by tasks.registering(Exec::class) {
+    description = "Build the ReSharper backend plugin"
+    workingDir(layout.projectDirectory)
+    executable("dotnet")
+    args(
+        "msbuild",
+        DotnetSolution,
+        "/t:Restore;Rebuild",
+        "/p:Configuration=${BuildConfiguration}",
+        "/p:HostFullIdentifier="
+    )
 }
 
-val compileDotNet by tasks.registering {
-    dependsOn(setBuildTool)
-    doLast {
-        val arguments = buildToolArgs!!.toMutableList()
-        arguments.add("/t:Restore;Rebuild")
-        providers.exec {
-            executable(buildToolExecutable!!)
-            args(arguments)
-            workingDir(rootDir)
-        }.result.get()
-    }
+val copyPluginDistribution by tasks.registering(Sync::class) {
+    from(layout.buildDirectory.file("distributions/${rootProject.name}-${version}.zip"))
+    into(layout.projectDirectory.dir("output"))
 }
 
 tasks.buildPlugin {
-    doLast {
-        copy {
-            from(layout.buildDirectory.file("distributions/${rootProject.name}-${version}.zip"))
-            into("${rootDir}/output")
-        }
-
-        // TODO: See also org.jetbrains.changelog: https://github.com/JetBrains/gradle-changelog-plugin
-        val changelogText = file("${rootDir}/CHANGELOG.md").readText()
-        val changelogMatches = Regex("(?s)(-.+?)(?=##|$)").findAll(changelogText)
-        val changeNotes = changelogMatches.map {
-            it.groups[1]!!.value.replace("(?s)- ".toRegex(), "\u2022 ").replace("`", "").replace(",", "%2C").replace(";", "%3B")
-        }.take(1).joinToString()
-
-        val arguments = buildToolArgs!!.toMutableList()
-        arguments.add("/t:Pack")
-        arguments.add("/p:PackageOutputPath=${rootDir}/output")
-        arguments.add("/p:PackageReleaseNotes=${changeNotes}")
-        arguments.add("/p:PackageVersion=${version}")
-        providers.exec {
-            executable(buildToolExecutable!!)
-            args(arguments)
-            workingDir(rootDir)
-        }.result.get()
-    }
+    finalizedBy(copyPluginDistribution)
 }
 
 dependencies {
@@ -161,25 +107,11 @@ tasks.patchPluginXml {
 tasks.prepareSandbox {
     dependsOn(compileDotNet)
 
-    val outputFolder = "${rootDir}/src/dotnet/${DotnetPluginId}/bin/${DotnetPluginId}.Rider/${BuildConfiguration}"
-    val dllFiles = listOf(
-            "$outputFolder/${DotnetPluginId}.dll",
-            "$outputFolder/${DotnetPluginId}.pdb",
-
-            // TODO: add additional assemblies
+    val outputFolder = layout.projectDirectory.dir(
+        "src/dotnet/${DotnetPluginId}/bin/${DotnetPluginId}.Rider/${BuildConfiguration}"
     )
-
-    dllFiles.forEach { f ->
-        val file = file(f)
-        from(file) { into("${rootProject.name}/dotnet") }
-    }
-
-    doLast {
-        dllFiles.forEach { f ->
-            val file = file(f)
-            if (!file.exists()) throw RuntimeException("File $file does not exist")
-        }
-    }
+    from(outputFolder.file("${DotnetPluginId}.dll")) { into("${rootProject.name}/dotnet") }
+    from(outputFolder.file("${DotnetPluginId}.pdb")) { into("${rootProject.name}/dotnet") }
 }
 
 tasks.publishPlugin {

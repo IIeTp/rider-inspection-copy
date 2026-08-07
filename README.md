@@ -28,7 +28,7 @@ Use the following command to build a Release package from an installed Rider:
 ```
 
 Without `-PriderPath`, Gradle resolves the Rider SDK from JetBrains repositories.
-The resulting ZIP and NuGet package are written to `output/`.
+The resulting plugin ZIP is written to `output/`.
 
 ## GitHub Actions
 

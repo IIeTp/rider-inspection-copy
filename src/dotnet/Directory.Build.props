@@ -2,7 +2,9 @@
 
   <PropertyGroup>
     <LangVersion>Latest</LangVersion>
-    <NoWarn>MSB3277</NoWarn>
+    <!-- Rider SDK 261.0 metadata references an unavailable 261.0.0 native package;
+         NuGet resolves the available 261.0.x package within the declared range. -->
+    <NoWarn>MSB3277;NU1603</NoWarn>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
