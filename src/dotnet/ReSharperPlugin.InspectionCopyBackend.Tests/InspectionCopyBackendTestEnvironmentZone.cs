@@ -8,8 +8,10 @@ using NUnit.Framework;
 
 namespace ReSharperPlugin.InspectionCopyBackend.Tests;
 
-[ZoneDefinition]
 /// <summary>
 /// Configures the ReSharper test environment for backend protocol tests.
 /// </summary>
-public class InspectionCopyBackendTestEnvironmentZone : ITestsEnvZone, IRequire<PsiFeatureTestZone>, IRequire<IInspectionCopyBackendZone>;
+[ZoneDefinition]
+public class InspectionCopyBackendTestEnvironmentZone : ITestsEnvZone, IRequire<PsiFeatureTestZone>, IRequire<IInspectionCopyBackendZone>
+{
+}
