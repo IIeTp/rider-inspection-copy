@@ -2,6 +2,7 @@ package com.codex.rider.inspectioncopy
 
 import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.project.DumbAwareAction
 
 /**
@@ -19,6 +20,7 @@ class InspectBenchmarkProjectAction : DumbAwareAction(
             ?: ActionManager.getInstance().getAction("InspectCode")
             ?: return
 
-        ActionManager.getInstance().tryToExecute(standard, e.inputEvent, null, e.place, true)
+        val contextComponent = e.getData(PlatformDataKeys.CONTEXT_COMPONENT)
+        ActionManager.getInstance().tryToExecute(standard, e.inputEvent, contextComponent, e.place, true)
     }
 }
