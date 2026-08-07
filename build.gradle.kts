@@ -169,7 +169,7 @@ val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
     // Install the built plugin from its distribution ZIP
     plugins {
         // Install built plugin ZIP directly
-        localPlugin(layout.projectDirectory.file("build/distributions/${rootProject.name}-${version}.zip").asFile)
+        localPlugin(layout.projectDirectory.file("build/distributions/${rootProject.name}-${version.toString()}.zip").asFile)
     }
     task {
         description = "Runs Rider platform tests with the built plugin installed"
