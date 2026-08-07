@@ -164,6 +164,7 @@ tasks.test {
 }
 
 val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
+    dependsOn(tasks.prepareSandbox)
     splitMode = true
     pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.BOTH
     task {
