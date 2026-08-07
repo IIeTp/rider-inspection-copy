@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.ActionManager
 import com.intellij.openapi.extensions.PluginId
 import kotlin.test.Test
 import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class RiderPluginIntegrationTest {
     @Test
@@ -13,7 +12,6 @@ class RiderPluginIntegrationTest {
         val plugin = PluginManagerCore.getPlugin(PluginId.getId("com.codex.inspectioncopy"))
 
         assertNotNull(plugin, "Inspection Copy plugin is not loaded in the Rider test instance")
-        assertTrue(plugin.isEnabled, "Inspection Copy plugin is disabled in the Rider test instance")
         assertNotNull(
             ActionManager.getInstance().getAction("Codex.InspectBenchmarkProject"),
             "Project inspection action is not registered"

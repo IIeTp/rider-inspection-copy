@@ -166,7 +166,7 @@ val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
     task {
         description = "Runs Rider platform tests with the built plugin installed"
         testClassesDirs = ideTestSourceSet.output.classesDirs
-        classpath = ideTestSourceSet.runtimeClasspath
+        classpath += ideTestSourceSet.runtimeClasspath
         useJUnitPlatform {
             includeEngines("junit-jupiter")
         }
