@@ -6,7 +6,7 @@ import org.jetbrains.intellij.platform.gradle.Constants
 plugins {
     id("java")
     alias(libs.plugins.kotlinJvm)
-    id("org.jetbrains.intellij.platform") version "2.10.5"     // See https://github.com/JetBrains/intellij-platform-gradle-plugin/releases
+    id("org.jetbrains.intellij.platform") version "2.18.1"     // See https://github.com/JetBrains/intellij-platform-gradle-plugin/releases
     id("me.filippov.gradle.jvm.wrapper") version "0.15.0"
 }
 
@@ -32,6 +32,12 @@ repositories {
         defaultRepositories()
         jetbrainsRuntime()
     }
+}
+
+intellijPlatform {
+    // This plugin does not contribute Settings pages. Running the searchable-options
+    // indexer starts unrelated Rider settings pages and produces Rider SDK errors.
+    buildSearchableOptions = false
 }
 
 version = extra["PluginVersion"] as String
@@ -106,7 +112,7 @@ val testDotNet by tasks.registering {
 tasks.buildPlugin {
     doLast {
         copy {
-            from("${buildDir}/distributions/${rootProject.name}-${version}.zip")
+            from(layout.buildDirectory.file("distributions/${rootProject.name}-${version}.zip"))
             into("${rootDir}/output")
         }
 
@@ -135,7 +141,9 @@ dependencies {
         // CI resolves the Rider SDK from JetBrains' repository. For local development,
         // pass -PriderPath="C:/Program Files/JetBrains/Rider2026.1" to use an existing IDE.
         if (riderPath.isNullOrBlank()) {
-            rider(ProductVersion)
+            rider(ProductVersion) {
+                useInstaller = false
+            }
         } else {
             local(riderPath!!)
         }
