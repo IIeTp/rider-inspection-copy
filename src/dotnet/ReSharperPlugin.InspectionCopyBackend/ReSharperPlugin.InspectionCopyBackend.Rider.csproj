@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
@@ -6,8 +6,6 @@
     <RootNamespace>$(AssemblyName)</RootNamespace>
     <IsPackable>false</IsPackable>
     <DefineConstants>$(DefineConstants);RIDER</DefineConstants>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +15,7 @@
     <PackageReference Include="JetBrains.Rider.Native.Core.windows-arm64.Release" Version="262.0.20260802.172830" PrivateAssets="all" />
     <PackageReference Include="JetBrains.Rider.Native.Core.windows-x64.Release" Version="262.0.20260802.172944" PrivateAssets="all" />
     <PackageReference Include="JetBrains.Rider.Native.Core.windows-x86.Release" Version="262.0.20260802.172835" PrivateAssets="all" />
+    <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
   </ItemGroup>
 
 </Project>
