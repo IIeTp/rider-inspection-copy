@@ -168,7 +168,7 @@ val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
     pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.BOTH
     plugins {
         // Ensure the current plugin is installed in the test sandbox
-        plugin(project.name!!, version as String)
+        plugin(project.name.toString(), version.toString())
     }
     task {
         description = "Runs Rider platform tests with the built plugin installed"
