@@ -5,7 +5,7 @@ and copies the displayed Code Issues with file paths and line coordinates withou
 requiring navigation to every issue.
 
 The plugin contains a Rider frontend and a ReSharper/Rider backend. The source in
-this repository corresponds to the 0.7.9 build submitted to JetBrains Marketplace.
+this repository corresponds to the 0.7.10 build.
 
 ## Build locally
 

@@ -48,7 +48,6 @@ tasks.processResources {
 
 sourceSets {
     main {
-        java.srcDir("src/rider/main/java")
         kotlin.srcDir("src/rider/main/kotlin")
         resources.srcDir("src/rider/main/resources")
     }
