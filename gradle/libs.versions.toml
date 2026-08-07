@@ -2,10 +2,12 @@
 kotlin = "2.3.0" # Rider 2026.1 model jars use Kotlin metadata 2.3.0
 rdGen = "2025.3.1" # https://github.com/JetBrains/rd/releases
 detekt = "2.0.0-alpha.2" # Compatible with Kotlin 2.3.0 and Gradle 9.0
+junit4 = "4.13.2"
 
 [libraries]
 kotlinStdLib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 rdGen = { group = "com.jetbrains.rd", name = "rd-gen", version.ref = "rdGen" }
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 
 [plugins]
 kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

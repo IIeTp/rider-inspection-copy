@@ -78,6 +78,7 @@ tasks.buildPlugin {
 
 dependencies {
     testImplementation(kotlin("test-junit5"))
+    testRuntimeOnly(libs.junit4)
 
     intellijPlatform {
         // CI resolves the Rider SDK from JetBrains' repository. For local development,
