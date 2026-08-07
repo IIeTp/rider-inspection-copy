@@ -171,7 +171,6 @@ val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
         // Install built plugin ZIP directly; depends on buildPlugin
         localPlugin(layout.projectDirectory.file("build/distributions/${rootProject.name}-${version}.zip"))
     }
-    dependsOn(tasks.buildPlugin)
     task {
         description = "Runs Rider platform tests with the built plugin installed"
         testClassesDirs = ideTestSourceSet.output.classesDirs
@@ -181,6 +180,7 @@ val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
         }
         jvmArgs("-Xshare:off")
     }
+    dependsOn(tasks.buildPlugin)
 }
 
 tasks.publishPlugin {
