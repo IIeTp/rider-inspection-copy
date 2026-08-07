@@ -17,8 +17,8 @@ the results already displayed by Rider.
 Requirements:
 
 - .NET SDK;
-- JDK 21;
-- Rider 2026.1, either installed locally or downloaded by Gradle.
+- JDK 25;
+- Rider 2026.2, either installed locally or downloaded by Gradle.
 
 To use an installed Rider and avoid downloading another IDE archive:
 
@@ -29,7 +29,7 @@ To use an installed Rider and avoid downloading another IDE archive:
 Use the following command to build a Release package from an installed Rider:
 
 ```powershell
-.\gradlew.bat buildPlugin -PBuildConfiguration=Release -PriderPath="C:/Program Files/JetBrains/Rider2026.1"
+.\gradlew.bat buildPlugin -PBuildConfiguration=Release -PriderPath="C:/Program Files/JetBrains/Rider2026.2"
 ```
 
 Without `-PriderPath`, Gradle resolves the Rider SDK from JetBrains repositories.

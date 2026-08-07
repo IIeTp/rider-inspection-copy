@@ -3,7 +3,7 @@
   <PropertyGroup>
     <!-- See https://www.nuget.org/packages/JetBrains.ReSharper.SDK -->
     <!-- Keep in sync with ProductVersion in gradle.properties -->
-    <SdkVersion>2026.1.2</SdkVersion>
+    <SdkVersion>2026.2.0.2</SdkVersion>
 
     <Title>Rider Inspection Copy</Title>
     <Description>Run Rider backend inspection for the selected benchmark project and copy results with source coordinates without navigating.</Description>

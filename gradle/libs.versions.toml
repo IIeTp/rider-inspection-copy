@@ -1,7 +1,7 @@
 [versions]
-kotlin = "2.3.0" # Rider 2026.1 model jars use Kotlin metadata 2.3.0
-rdGen = "2025.3.1" # https://github.com/JetBrains/rd/releases
-detekt = "2.0.0-alpha.2" # Compatible with Kotlin 2.3.0 and Gradle 9.0
+kotlin = "2.4.10" # Current stable Kotlin release; compatible with Rider 2026.2 model jars
+rdGen = "2026.2.5" # https://github.com/JetBrains/rd/releases
+detekt = "2.0.0-alpha.6" # Built against Kotlin 2.4.10, Gradle 9.6.1, and JDK 25
 junit4 = "4.13.2"
 
 [libraries]

@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.detekt)
     id("org.jetbrains.intellij.platform") version "2.18.1"     // See https://github.com/JetBrains/intellij-platform-gradle-plugin/releases
-    id("me.filippov.gradle.jvm.wrapper") version "0.15.0"
+    id("me.filippov.gradle.jvm.wrapper") version "0.16.0"
 }
 
 val DotnetSolution: String by project
@@ -92,7 +92,7 @@ dependencies {
 
     intellijPlatform {
         // CI resolves the Rider SDK from JetBrains' repository. For local development,
-        // pass -PriderPath="C:/Program Files/JetBrains/Rider2026.1" to use an existing IDE.
+        // pass -PriderPath="C:/Program Files/JetBrains/Rider2026.2" to use an existing IDE.
         if (riderPath.isNullOrBlank()) {
             rider(ProductVersion) {
                 useInstaller = false
