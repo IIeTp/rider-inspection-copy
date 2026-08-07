@@ -160,7 +160,7 @@ public sealed class InspectionCopyRequestHandler
     if (value is IEnumerable enumerable && value is not string && IsOccurrenceList(valueType))
       return enumerable.Cast<object>().OfType<IOccurrence>().ToList();
 
-    if (!valueType.Name.Contains("DisplayClass", StringComparison.Ordinal)) return null;
+    if (valueType.Name.IndexOf("DisplayClass", StringComparison.Ordinal) < 0) return null;
 
     foreach (var field in AllFields(valueType))
     {
