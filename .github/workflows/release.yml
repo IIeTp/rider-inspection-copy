@@ -7,6 +7,11 @@ on:
     tags:
       - 'v*'
   pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
   workflow_dispatch:
     inputs:
       tag:
@@ -14,12 +19,14 @@ on:
         required: true
         default: 'v0.8.0'
 
+# Never cancel a build just because another commit was pushed.
+# Every push/PR event must produce a separately observable run.
 concurrency:
-  group: plugin-build-${{ github.ref }}
-  cancel-in-progress: true
+  group: plugin-build-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
