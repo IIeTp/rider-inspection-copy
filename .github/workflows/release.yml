@@ -105,9 +105,6 @@ jobs:
 
       - name: Run backend tests
         env:
-          # ReSharper SDK tests target .NET Framework and start a Mono test host.
-          # On GitHub-hosted Linux runners the host can need more than VSTest's
-          # default 90 seconds before protocol negotiation completes.
           VSTEST_CONNECTION_TIMEOUT: 300
         shell: bash
         run: |
