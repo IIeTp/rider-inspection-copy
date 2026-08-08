@@ -163,7 +163,7 @@ tasks.test {
     jvmArgs("-Xshare:off")
 }
 
-val pluginDistributionPath = layout.projectDirectory.file("build/distributions/${rootProject.name}-${version.get()}.zip")
+val pluginDistributionPath = layout.projectDirectory.file("build/distributions/${rootProject.name}-${project.version}.zip")
 
 val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
     splitMode = true
