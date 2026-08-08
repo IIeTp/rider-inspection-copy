@@ -38,6 +38,17 @@ jobs:
           test "$GITHUB_SHA" = "$(git rev-parse HEAD)"
           echo "Revision verification: OK"
 
+      - name: Verify Rider test configuration
+        shell: bash
+        run: |
+          grep -F 'testFramework(TestFrameworkType.Bundled)' build.gradle.kts
+          if grep -Fq 'TestFrameworkType.Platform.Bundled' build.gradle.kts; then
+            echo 'Invalid Rider test framework configuration detected.' >&2
+            exit 1
+          fi
+          test -f src/rider/ideTest/kotlin/com/codex/rider/inspectioncopy/RiderPluginIntegrationTest.kt
+          echo 'Rider test configuration: OK'
+
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
