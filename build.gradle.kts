@@ -9,7 +9,7 @@ plugins {
     id("java")
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.detekt)
-    id("org.jetbrains.intellij.platform") version "2.18.1"     // See https://github.com/JetBrains/intellij-platform-gradle-plugin/releases
+    id("org.jetbrains.intellij.platform") version "2.18.1"
     id("me.filippov.gradle.jvm.wrapper") version "0.16.0"
 }
 
@@ -35,8 +35,6 @@ repositories {
 }
 
 intellijPlatform {
-    // This plugin does not contribute Settings pages. Running the searchable-options
-    // indexer starts unrelated Rider settings pages and produces Rider SDK errors.
     buildSearchableOptions = false
 }
 
@@ -93,8 +91,6 @@ dependencies {
     testRuntimeOnly(libs.junit4)
 
     intellijPlatform {
-        // CI resolves the Rider SDK from JetBrains' repository. For local development,
-        // pass -PriderPath="C:/Program Files/JetBrains/Rider2026.2" to use an existing IDE.
         if (riderPath.isNullOrBlank()) {
             rider(ProductVersion) {
                 useInstaller = false
@@ -103,23 +99,17 @@ dependencies {
             local(riderPath!!)
         }
 
-        // Rider does not publish its platform test framework as a Maven artifact.
-        // Use the framework bundled in the Rider distribution for platform tests.
-        testFramework(TestFrameworkType.Bundled)
-
-        // TODO: add plugins
-        // bundledPlugin("uml")
-        // bundledPlugin("com.jetbrains.ChooseRuntime:1.0.9")
+        // Rider's test-framework is bundled inside the Rider distribution and is not
+        // published as the regular Maven test-framework artifact.
+        testFramework(TestFrameworkType.Platform.Bundled)
     }
 }
 
 tasks.runIde {
-    // Match Rider's default heap size of 1.5Gb (default for runIde is 512Mb)
     maxHeapSize = "1500m"
 }
 
 tasks.patchPluginXml {
-    // TODO: See also org.jetbrains.changelog: https://github.com/JetBrains/gradle-changelog-plugin
     val changelogText = file("${rootDir}/CHANGELOG.md").readText()
     val changelogMatches = Regex("(?s)(-.+?)(?=##|\$)").findAll(changelogText)
 
@@ -163,18 +153,24 @@ tasks.test {
     jvmArgs("-Xshare:off")
 }
 
-val pluginDistributionPath = layout.projectDirectory.file("build/distributions/${rootProject.name}-${project.version}.zip")
+val pluginDistributionPath = layout.buildDirectory.file(
+    "distributions/${rootProject.name}-${project.version}.zip"
+)
 
 val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
     splitMode = true
-    pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.BOTH
-    // Install the built plugin from its distribution ZIP
+    // This plugin contributes Rider frontend actions and startup activities.
+    // Installing it only in the frontend avoids treating it as a backend split plugin.
+    pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.FRONTEND
+
     plugins {
-        // Install built plugin ZIP directly; uses pre-computed path
-        localPlugin(pluginDistributionPath.getAsFile())
+        // Use the exact plugin produced by buildPlugin. The dependency is lazy, so
+        // Gradle does not require the ZIP to exist during configuration.
+        localPlugin(pluginDistributionPath)
     }
+
     task {
-        description = "Runs Rider platform tests with the built plugin installed"
+        description = "Runs Rider integration tests with the built plugin installed"
         dependsOn(tasks.buildPlugin)
         testClassesDirs = ideTestSourceSet.output.classesDirs
         classpath += ideTestSourceSet.runtimeClasspath
@@ -199,7 +195,7 @@ artifacts {
     add(riderModel.name, provider {
         file("${rootDir}/tools/rider-model.jar").also {
             check(it.isFile) {
-                "rider-model.jar is not found at $riderModel"
+                "rider-model.jar is not found at $it"
             }
         }
     })
