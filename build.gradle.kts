@@ -154,12 +154,14 @@ val pluginDistributionPath = layout.buildDirectory.file(
 )
 
 val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
+    // Rider uses split mode for its frontend/backend architecture.
     splitMode = true
-    pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.FRONTEND
+    pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.BOTH
 
-    // Rider's test-framework.jar is bundled in the Rider distribution and is not
-    // published as a standalone Maven artifact. This dependency belongs to this
-    // custom testIde entry so its test runtime gets the Rider framework.
+    // Rider's test-framework.jar is bundled with the Rider distribution and is
+    // not published as a standalone Maven artifact. The testing entry must
+    // receive this dependency itself; putting it only on the normal test
+    // configuration does not make it available to this custom testIde task.
     testFramework(TestFrameworkType.Bundled)
 
     plugins {
