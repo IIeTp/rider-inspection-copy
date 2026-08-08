@@ -99,9 +99,10 @@ dependencies {
             local(riderPath!!)
         }
 
-        // Rider's test-framework is bundled inside the Rider distribution and is not
-        // published as the regular Maven test-framework artifact.
-        testFramework(TestFrameworkType.Platform.Bundled)
+        // Rider's test framework is provided by the Rider distribution. The
+        // Platform test framework is the API exposed by the 2.18.1 plugin DSL.
+        // The Rider test IDE itself supplies the platform test framework at runtime.
+        testFramework(TestFrameworkType.Platform)
     }
 }
 
@@ -159,13 +160,9 @@ val pluginDistributionPath = layout.buildDirectory.file(
 
 val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
     splitMode = true
-    // This plugin contributes Rider frontend actions and startup activities.
-    // Installing it only in the frontend avoids treating it as a backend split plugin.
     pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.FRONTEND
 
     plugins {
-        // Use the exact plugin produced by buildPlugin. The dependency is lazy, so
-        // Gradle does not require the ZIP to exist during configuration.
         localPlugin(pluginDistributionPath)
     }
 
