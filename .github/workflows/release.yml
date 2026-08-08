@@ -125,12 +125,14 @@ jobs:
             --no-daemon --stacktrace
 
       - name: Install Mono for .NET Framework tests
+        if: ${{ !cancelled() }}
         shell: bash
         run: |
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y mono-complete
 
       - name: Run backend tests
+        if: ${{ !cancelled() }}
         env:
           VSTEST_CONNECTION_TIMEOUT: 300
         shell: bash
@@ -141,12 +143,14 @@ jobs:
             --logger "console;verbosity=minimal"
 
       - name: Check C# formatting
+        if: ${{ !cancelled() }}
         shell: bash
         run: |
           dotnet format ReSharperPlugin.InspectionCopyBackend.sln \
             --verify-no-changes --no-restore --severity warn
 
       - name: Upload workflow artifact
+        if: ${{ !cancelled() && hashFiles('output/*.zip') != '' }}
         uses: actions/upload-artifact@v7
         with:
           name: rider-inspection-copy-${{ steps.version.outputs.version }}
