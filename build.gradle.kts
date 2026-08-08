@@ -98,6 +98,11 @@ dependencies {
         } else {
             local(riderPath!!)
         }
+
+        // Rider does not publish its test-framework.jar as a standalone Maven
+        // artifact. Platform.Bundled attaches the test framework bundled in the
+        // Rider distribution, which is required for Rider integration tests.
+        testFramework(TestFrameworkType.Platform.Bundled)
     }
 }
 
@@ -159,10 +164,6 @@ val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
     // same package that is shipped to users, including the ReSharper backend.
     splitMode = true
     pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.BOTH
-
-    // This is a property of this custom testIde entry, not of the ordinary
-    // Gradle test configuration. Rider supplies the bundled testFramework.jar.
-    testFramework(TestFrameworkType.Bundled)
 
     plugins {
         localPlugin(pluginDistributionPath)
