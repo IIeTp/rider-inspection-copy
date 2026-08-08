@@ -99,10 +99,10 @@ dependencies {
             local(riderPath!!)
         }
 
-        // Rider's test framework is provided by the Rider distribution. The
-        // Platform test framework is the API exposed by the 2.18.1 plugin DSL.
-        // The Rider test IDE itself supplies the platform test framework at runtime.
-        testFramework(TestFrameworkType.Platform)
+        // Rider does not publish its test-framework as a Maven artifact.
+        // TestFrameworkType.Bundled attaches Rider's lib/testFramework.jar
+        // from the resolved Rider SDK, which is required by Rider integration tests.
+        testFramework(TestFrameworkType.Bundled)
     }
 }
 
