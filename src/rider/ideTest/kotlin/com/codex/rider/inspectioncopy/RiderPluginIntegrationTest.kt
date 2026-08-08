@@ -23,6 +23,11 @@ class RiderPluginIntegrationTest {
             plugin,
             "Inspection Copy plugin is not loaded in the Rider test instance"
         )
+        assertEquals(
+            "com.codex.inspectioncopy",
+            plugin.pluginId.idString,
+            "The loaded plugin has an unexpected plugin ID"
+        )
         assertTrue(
             plugin.isEnabled,
             "Inspection Copy plugin is installed but disabled in the Rider test instance"
