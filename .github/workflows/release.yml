@@ -35,6 +35,8 @@ jobs:
           echo "GitHub SHA: $GITHUB_SHA"
           echo "Checked out SHA: $(git rev-parse HEAD)"
           git log -1 --oneline --decorate
+          test "$GITHUB_SHA" = "$(git rev-parse HEAD)"
+          echo "Revision verification: OK"
 
       - name: Set up Java
         uses: actions/setup-java@v5
