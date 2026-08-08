@@ -7,6 +7,7 @@ import com.intellij.openapi.extensions.PluginId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
 
 class RiderPluginIntegrationTest {
     @Test
@@ -22,13 +23,23 @@ class RiderPluginIntegrationTest {
             plugin,
             "Inspection Copy plugin is not loaded in the Rider test instance"
         )
+        assertTrue(
+            plugin.isEnabled,
+            "Inspection Copy plugin is installed but disabled in the Rider test instance"
+        )
     }
 
     @Test
     fun projectInspectionActionIsRegistered() {
+        val action = ActionManager.getInstance().getAction("Codex.InspectBenchmarkProject")
         assertNotNull(
-            ActionManager.getInstance().getAction("Codex.InspectBenchmarkProject"),
+            action,
             "Project inspection action is not registered"
+        )
+        assertEquals(
+            "com.codex.rider.inspectioncopy.InspectBenchmarkProjectAction",
+            action.javaClass.name,
+            "Project inspection action is registered with an unexpected implementation"
         )
     }
 }
