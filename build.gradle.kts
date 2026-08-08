@@ -98,11 +98,6 @@ dependencies {
         } else {
             local(riderPath!!)
         }
-
-        // Rider does not publish its test-framework.jar as a standalone Maven
-        // artifact. Platform.Bundled attaches the test framework bundled in the
-        // Rider distribution, which is required for Rider integration tests.
-        testFramework(TestFrameworkType.Platform.Bundled)
     }
 }
 
@@ -159,11 +154,15 @@ val pluginDistributionPath = layout.buildDirectory.file(
 )
 
 val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
-    // Rider uses split mode for its frontend/backend architecture. Install the
-    // complete plugin in both processes so the integration test exercises the
-    // same package that is shipped to users, including the ReSharper backend.
+    // Rider uses split mode for its frontend/backend architecture.
     splitMode = true
     pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.BOTH
+
+    // Rider's test-framework.jar is bundled with the Rider distribution and is
+    // not published as a standalone Maven artifact. The testing entry must
+    // receive this dependency itself; putting it only on the normal test
+    // configuration does not make it available to this custom testIde task.
+    testFramework(TestFrameworkType.Bundled)
 
     plugins {
         localPlugin(pluginDistributionPath)
