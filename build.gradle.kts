@@ -98,10 +98,6 @@ dependencies {
         } else {
             local(riderPath!!)
         }
-
-        // Rider's test-framework is bundled inside the Rider distribution and is not
-        // published as the regular Maven test-framework artifact.
-        testFramework(TestFrameworkType.Platform.Bundled)
     }
 }
 
@@ -159,13 +155,14 @@ val pluginDistributionPath = layout.buildDirectory.file(
 
 val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
     splitMode = true
-    // This plugin contributes Rider frontend actions and startup activities.
-    // Installing it only in the frontend avoids treating it as a backend split plugin.
     pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.FRONTEND
 
+    // Rider's test-framework.jar is bundled in the Rider distribution and is not
+    // published as a standalone Maven artifact. This dependency belongs to this
+    // custom testIde entry so its test runtime gets the Rider framework.
+    testFramework(TestFrameworkType.Bundled)
+
     plugins {
-        // Use the exact plugin produced by buildPlugin. The dependency is lazy, so
-        // Gradle does not require the ZIP to exist during configuration.
         localPlugin(pluginDistributionPath)
     }
 
