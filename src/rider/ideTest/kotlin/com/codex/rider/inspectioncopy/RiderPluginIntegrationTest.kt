@@ -5,7 +5,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.jar.JarFile
 import kotlin.test.Test
-import kotlin.test.assertContains
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -17,9 +16,8 @@ class RiderPluginIntegrationTest {
         }
         val productInfo = Files.readString(Path.of(ideaHomePath).resolve("product-info.json"))
 
-        assertContains(
-            productInfo,
-            "\"productCode\": \"RD\"",
+        assertTrue(
+            productInfo.contains("\"productCode\": \"RD\""),
             "The integration test must use Rider rather than another IntelliJ Platform product"
         )
     }
@@ -42,11 +40,10 @@ class RiderPluginIntegrationTest {
             )
             val descriptor = archive.getInputStream(descriptorEntry).bufferedReader().use { it.readText() }
 
-            assertContains(descriptor, "<id>com.codex.inspectioncopy</id>")
-            assertContains(descriptor, "id=\"Codex.InspectBenchmarkProject\"")
-            assertContains(
-                descriptor,
-                "com.codex.rider.inspectioncopy.InspectBenchmarkProjectAction",
+            assertTrue(descriptor.contains("<id>com.codex.inspectioncopy</id>"))
+            assertTrue(descriptor.contains("id=\"Codex.InspectBenchmarkProject\""))
+            assertTrue(
+                descriptor.contains("com.codex.rider.inspectioncopy.InspectBenchmarkProjectAction"),
                 "plugin.xml must register the Inspect Code action implementation"
             )
         }

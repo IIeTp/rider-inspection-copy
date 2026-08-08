@@ -31,7 +31,7 @@ permissions:
 jobs:
   build:
     name: Build plugin
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Check out sources
         uses: actions/checkout@v6
@@ -123,13 +123,6 @@ jobs:
             -PBuildConfiguration=Release \
             -PPluginVersion="${{ steps.version.outputs.version }}" \
             --no-daemon --stacktrace
-
-      - name: Install Mono for .NET Framework tests
-        if: ${{ !cancelled() }}
-        shell: bash
-        run: |
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y mono-complete
 
       - name: Run backend tests
         if: ${{ !cancelled() }}
