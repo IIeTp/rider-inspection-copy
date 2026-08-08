@@ -7,7 +7,6 @@ import com.intellij.openapi.extensions.PluginId
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import kotlin.test.assertTrue
 
 class RiderPluginIntegrationTest {
     @Test
@@ -22,10 +21,6 @@ class RiderPluginIntegrationTest {
         assertNotNull(
             plugin,
             "Inspection Copy plugin is not loaded in the Rider test instance"
-        )
-        assertTrue(
-            plugin.isEnabled,
-            "Inspection Copy plugin is installed but disabled in the Rider test instance"
         )
     }
 

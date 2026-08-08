@@ -149,22 +149,23 @@ tasks.test {
     jvmArgs("-Xshare:off")
 }
 
-val pluginDistributionPath = layout.buildDirectory.file(
-    "distributions/${rootProject.name}-${project.version}.zip"
-)
-
 val riderIdeTest = intellijPlatformTesting.testIde.register("riderIdeTest") {
     splitMode = true
     pluginInstallationTarget = SplitModeAware.PluginInstallationTarget.BOTH
     testFramework(TestFrameworkType.Bundled)
 
-    plugins {
-        localPlugin(pluginDistributionPath.map { it.asFile })
+    prepareSandboxTask {
+        dependsOn(compileDotNet)
+
+        val outputFolder = layout.projectDirectory.dir(
+            "src/dotnet/${DotnetPluginId}/bin/${DotnetPluginId}.Rider/${BuildConfiguration}"
+        )
+        from(outputFolder.file("${DotnetPluginId}.dll")) { into("${rootProject.name}/dotnet") }
+        from(outputFolder.file("${DotnetPluginId}.pdb")) { into("${rootProject.name}/dotnet") }
     }
 
     task {
-        description = "Runs Rider integration tests with the built plugin installed"
-        dependsOn(tasks.buildPlugin)
+        description = "Runs Rider integration tests with the complete plugin sandbox"
         testClassesDirs = ideTestSourceSet.output.classesDirs
         classpath += ideTestSourceSet.runtimeClasspath
         useJUnitPlatform {
